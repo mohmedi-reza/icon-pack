@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { Toolbar } from "./Toolbar";
 import { Footer } from "./Footer";
+import Icon from "../icon/icon.component";
 
 interface MainLayoutProps {
   children: ReactNode;
@@ -16,7 +17,7 @@ export function MainLayout({ children, className }: MainLayoutProps) {
           <div className="flex h-14 items-center">
             <div className="mr-4 flex">
               <a href="/" className="flex items-center space-x-2">
-                <span className="font-bold">Icon Pack</span>
+                <Icon name="logo" className="text-3xl" />
               </a>
             </div>
             <Toolbar />
