@@ -64,15 +64,15 @@ function CollectionCard({
   
   // Card base styling
   const cardClasses = `
-    border rounded-md p-3 transition-all
-    ${isSelected ? 'ring-2 ring-primary border-primary' : ''}
-    ${isDragOver ? 'bg-primary/10 border-primary' : ''}
-    ${isBatchMode && hasSelectedIcons ? 'cursor-pointer hover:bg-muted/50' : ''}
+    border rounded-lg p-4 transition-all shadow-sm hover:shadow
+    ${isSelected ? 'ring-2 ring-primary border-primary bg-primary/5' : 'hover:border-primary/40'}
+    ${isDragOver ? 'bg-primary/10 border-primary shadow' : ''}
+    ${isBatchMode && hasSelectedIcons ? 'cursor-pointer hover:bg-primary/5' : ''}
   `;
   
   if (isEditing) {
     return (
-      <div className={`${cardClasses} border-primary`}>
+      <div className={`${cardClasses} border-primary/50`}>
         <div className="space-y-3">
           <div>
             <label htmlFor={`edit-name-${collection.id}`} className="text-xs font-medium block mb-1">
@@ -119,7 +119,7 @@ function CollectionCard({
   if (isBatchMode && hasSelectedIcons) {
     return (
       <div 
-        className={`${cardClasses} hover:border-primary cursor-pointer`}
+        className={`${cardClasses} hover:border-primary cursor-pointer border-dashed bg-primary/5`}
         onClick={(e) => {
           e.preventDefault();
           onAddSelectedIcons();
@@ -143,16 +143,19 @@ function CollectionCard({
           onAddSelectedIcons();
         }}
       >
-        <div className="flex items-center gap-3">
-          <div className="bg-primary/10 p-2 rounded-full">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary">
+        <div className="flex items-center justify-center gap-3">
+          <div className="bg-primary/20 p-2 rounded-full text-primary">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M12 5v14M5 12h14"></path>
             </svg>
           </div>
           <div>
             <div className="font-medium">Add to "{collection.name}"</div>
-            <div className="text-xs text-muted-foreground">
-              Click to add selected icons
+            <div className="flex items-center text-xs text-muted-foreground mt-1">
+              <span className="px-2 py-0.5 bg-primary/10 rounded-full text-primary font-medium mr-2">
+                Click to Add
+              </span>
+              Selected icons to this collection
             </div>
           </div>
         </div>
@@ -201,12 +204,12 @@ function CollectionCard({
           {!isBatchMode && collection.icons.length > 0 && (
             <div className="flex gap-1 mt-2 overflow-hidden">
               {icons.slice(0, 5).map((icon, i) => (
-                <div key={i} className="h-6 w-6 flex-shrink-0">
+                <div key={i} className="h-6 w-6 flex-shrink-0 bg-primary/5 rounded p-0.5 text-primary">
                   {icon}
                 </div>
               ))}
               {collection.icons.length > 5 && (
-                <div className="h-6 w-6 flex items-center justify-center rounded-full bg-muted text-xs">
+                <div className="h-6 w-6 flex items-center justify-center rounded-full bg-muted text-xs font-medium">
                   +{collection.icons.length - 5}
                 </div>
               )}
@@ -217,7 +220,7 @@ function CollectionCard({
         {!isBatchMode && (
           <div className="flex flex-col gap-1 ml-3">
             <button 
-              className="p-1 hover:bg-muted rounded text-muted-foreground hover:text-foreground" 
+              className="p-1 hover:bg-primary/10 rounded text-muted-foreground hover:text-primary transition-colors" 
               onClick={onEdit}
               title="Edit collection"
             >
@@ -226,7 +229,7 @@ function CollectionCard({
               </svg>
             </button>
             <button 
-              className="p-1 hover:bg-muted rounded text-muted-foreground hover:text-foreground" 
+              className="p-1 hover:bg-primary/10 rounded text-muted-foreground hover:text-primary transition-colors" 
               onClick={onDuplicate}
               title="Duplicate collection"
             >
@@ -236,7 +239,7 @@ function CollectionCard({
               </svg>
             </button>
             <button 
-              className={`p-1 hover:bg-muted rounded ${collection.icons.length === 0 ? 'text-muted-foreground/40' : 'text-muted-foreground hover:text-foreground'}`}
+              className={`p-1 hover:bg-primary/10 rounded transition-colors ${collection.icons.length === 0 ? 'text-muted-foreground/40' : 'text-muted-foreground hover:text-primary'}`}
               onClick={onExport}
               disabled={collection.icons.length === 0}
               title="Export collection"
@@ -248,7 +251,7 @@ function CollectionCard({
               </svg>
             </button>
             <button 
-              className="p-1 hover:bg-red-50 rounded text-muted-foreground hover:text-red-500" 
+              className="p-1 hover:bg-red-50 rounded text-muted-foreground hover:text-red-500 transition-colors" 
               onClick={onDelete}
               title="Delete collection"
             >
@@ -274,7 +277,7 @@ export function CollectionManager() {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [collectionToDelete, setCollectionToDelete] = useState<string | null>(null);
   const [editingCollection, setEditingCollection] = useState<IconCollection | null>(null);
-  const [sortOrder, setSortOrder] = useState<'name' | 'newest' | 'size'>('name');
+  const [sortOrder] = useState<'name' | 'newest' | 'size'>('name');
   
   const handleCreateCollection = () => {
     if (!newCollectionName.trim()) return;
@@ -413,32 +416,52 @@ export function CollectionManager() {
   const hasSelectedIcons = state.selectedBatchIcons.length > 0;
   
   return (
-    <div className="space-y-4 border rounded-lg p-4 bg-card">
+    <div className="space-y-4 border rounded-xl p-5 bg-card shadow-sm">
       {/* Header with title and buttons */}
       <div className="flex-col items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold">Collections</h3>
-        <div className="flex items-center gap-2 mt-3">
+        <h3 className="text-lg font-semibold flex items-center gap-2">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary">
+            <path d="M20 6v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2Z"/>
+            <path d="M8 2v4"/>
+            <path d="M16 2v4"/>
+            <path d="M2 10h20"/>
+          </svg>
+          Collections
+        </h3>
+        <div className="flex-col space-y-2 items-center gap-2 mt-3">
           <Button
             size="sm"
             variant={state.batchSelectionMode ? 'default' : 'outline'}
             onClick={() => toggleBatchMode()}
             disabled={state.icons.length === 0}
-            className="flex items-center gap-1"
+            className={`flex w-full items-center gap-1.5 ${state.batchSelectionMode ? 'bg-primary-400 hover:bg-primary-500' : ''}`}
           >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <rect width="8" height="8" x="3" y="3" rx="1"></rect>
-              <rect width="8" height="8" x="13" y="3" rx="1"></rect>
-              <rect width="8" height="8" x="3" y="13" rx="1"></rect>
-              <rect width="8" height="8" x="13" y="13" rx="1"></rect>
-            </svg>
-            {state.batchSelectionMode ? 'Cancel Batch' : 'Batch Mode'}
+            {state.batchSelectionMode ? (
+              <>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M18 6 6 18"></path>
+                  <path d="m6 6 12 12"></path>
+                </svg>
+                Exit Batch Mode
+              </>
+            ) : (
+              <>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect width="8" height="8" x="3" y="3" rx="1"></rect>
+                  <rect width="8" height="8" x="13" y="3" rx="1"></rect>
+                  <rect width="8" height="8" x="3" y="13" rx="1"></rect>
+                  <rect width="8" height="8" x="13" y="13" rx="1"></rect>
+                </svg>
+                Select Multiple Icons
+              </>
+            )}
           </Button>
           
           <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
             <DialogTrigger asChild>
               <Button
                 size="sm"
-                className="flex items-center gap-1"
+                className="flex items-center gap-1.5 w-full"
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M12 5v14M5 12h14"></path>
@@ -586,21 +609,53 @@ export function CollectionManager() {
       
       {/* Batch mode notice */}
       {state.batchSelectionMode && (
-        <div className="bg-primary/10 border border-primary rounded-md p-3 mb-4">
-          <div className="flex items-center gap-2 mb-2">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary">
-              <circle cx="12" cy="12" r="10"></circle>
-              <path d="M12 8v4M12 16h.01"></path>
-            </svg>
-            <p className="text-sm font-medium">
-              Batch Mode Active
-            </p>
+        <div className="bg-primary/10 border border-primary/20 rounded-lg p-4 mb-4 relative">
+          <div className="absolute -top-2 -right-2 bg-primary text-white text-xs px-1.5 py-0.5 rounded font-medium">
+            Batch Mode
           </div>
-          <p className="text-sm mb-2">
-            Select icons to add to a collection. You can also drag icons directly to collections.
-          </p>
-          <div className="flex justify-between items-center">
-            <span className="text-sm font-medium">{state.selectedBatchIcons.length} icons selected</span>
+          <div className="flex items-center gap-2 mb-3">
+            <div className="bg-primary/20 p-1.5 rounded-full">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M12 8v4M12 16h.01"></path>
+              </svg>
+            </div>
+            <div>
+              <p className="text-sm font-medium leading-tight">
+                Multiple Selection Active
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Select icons by clicking them
+              </p>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-2 gap-2 mb-3">
+            <div className="flex flex-col items-center border border-dashed border-primary/30 rounded-md p-2 bg-primary/5">
+              <p className="text-xs font-medium mb-1">Step 1</p>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary mb-1">
+                <path d="M12 20v-6m0 0V4m0 10h6m-6 0H6"/>
+              </svg>
+              <p className="text-xs text-center">Select icons by clicking</p>
+            </div>
+            <div className="flex flex-col items-center border border-dashed border-primary/30 rounded-md p-2 bg-primary/5">
+              <p className="text-xs font-medium mb-1">Step 2</p>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary mb-1">
+                <rect width="18" height="18" x="3" y="3" rx="2"/>
+                <path d="M8 12h8"/>
+                <path d="M12 8v8"/>
+              </svg>
+              <p className="text-xs text-center">Click a collection to add</p>
+            </div>
+          </div>
+          
+          <div className="flex justify-between items-center bg-white/50 p-2 rounded-md">
+            <div className="flex items-center gap-2">
+              <div className="h-6 w-6 bg-primary/10 rounded-full flex items-center justify-center text-primary text-sm font-medium">
+                {state.selectedBatchIcons.length}
+              </div>
+              <span className="text-sm">{state.selectedBatchIcons.length === 1 ? 'icon' : 'icons'} selected</span>
+            </div>
             <Button 
               size="sm" 
               variant="outline" 
@@ -611,7 +666,7 @@ export function CollectionManager() {
                 <path d="M18 6 6 18"></path>
                 <path d="m6 6 12 12"></path>
               </svg>
-              Cancel
+              Exit
             </Button>
           </div>
         </div>
@@ -637,7 +692,7 @@ export function CollectionManager() {
       {/* Sort options */}
       <div className="flex items-center justify-between mb-3 text-sm">
         <span className="font-medium">Your Collections</span>
-        <div className="flex items-center gap-2">
+        {/* <div className="flex items-center gap-2">
           <span className="text-muted-foreground">Sort by:</span>
           <button 
             className={`${sortOrder === 'name' ? 'text-primary font-medium' : 'text-muted-foreground'}`}
@@ -652,22 +707,24 @@ export function CollectionManager() {
           >
             Size
           </button>
-        </div>
+        </div> */}
       </div>
       
       {/* Collection list */}
       <div className="space-y-3">
         {sortedCollections.length === 0 ? (
-          <div className="text-center py-8 border border-dashed rounded-md bg-muted/20">
+          <div className="text-center py-8 border border-dashed rounded-lg bg-muted/10">
             <div className="flex justify-center mb-2">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-muted-foreground">
-                <path d="M20 6v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2Z"></path>
-                <path d="M8 2v4"></path>
-                <path d="M16 2v4"></path>
-                <path d="M2 10h20"></path>
-              </svg>
+              <div className="bg-muted/20 p-3 rounded-full">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-muted-foreground">
+                  <path d="M20 6v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2Z"></path>
+                  <path d="M8 2v4"></path>
+                  <path d="M16 2v4"></path>
+                  <path d="M2 10h20"></path>
+                </svg>
+              </div>
             </div>
-            <p className="text-muted-foreground">No collections created yet</p>
+            <p className="text-muted-foreground font-medium">No collections created yet</p>
             <p className="text-xs text-muted-foreground mt-1">Create a collection to organize your icons</p>
           </div>
         ) : (
@@ -698,12 +755,12 @@ export function CollectionManager() {
       </div>
       
       {/* Export all */}
-      <div className="flex justify-end mt-4 pt-4 border-t">
+      <div className="flex justify-center mt-4 pt-4 border-t">
         <Button 
           onClick={() => handleExportCollection()}
           disabled={state.icons.length === 0}
           variant="outline"
-          className="flex items-center gap-2"
+          className="w-full flex items-center justify-center gap-2"
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
