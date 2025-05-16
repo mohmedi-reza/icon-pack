@@ -17,7 +17,7 @@ export function MainLayout({ children, className }: MainLayoutProps) {
           <div className="flex h-14 items-center">
             <div className="mr-4 flex">
               <a href="/" className="flex items-center space-x-2">
-                <Icon name="logo" className="text-3xl" />
+                <Icon name="designtools" className="text-3xl" />
               </a>
             </div>
             <Toolbar />
