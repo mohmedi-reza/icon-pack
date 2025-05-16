@@ -12,7 +12,7 @@ interface MainLayoutProps {
 export function MainLayout({ children, className }: MainLayoutProps) {
   return (
     <div className="flex flex-col min-h-svh">
-      <header className="sticky top-0 z-10 border-b bg-white">
+      <header className="sticky top-0 z-50 border-b bg-white ">
         <div className="container max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex h-14 items-center">
             <div className="mr-4 flex">
