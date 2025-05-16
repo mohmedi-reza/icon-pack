@@ -48,12 +48,25 @@ export function processSvg(svgContent: string): string {
  * Generates a normalized name from a filename
  */
 export function normalizeName(filename: string): string {
-  return filename
+  // Remove .svg extension and clean up special characters
+  let normalized = filename
     .replace(/\.svg$/, '') // Remove .svg extension
-    .replace(/[^\w\s-]/g, '') // Remove special characters
-    .replace(/[\s-]+/g, '-') // Replace spaces and multiple hyphens with a single hyphen
-    .replace(/^-+|-+$/g, '') // Remove leading and trailing hyphens
-    .toLowerCase(); // Convert to lowercase
+    .replace(/[^\w\s-]/g, ' ') // Replace special characters with spaces
+    .trim();
+
+  // Convert to camelCase
+  normalized = normalized
+    .split(/[\s-]+/) // Split by spaces and hyphens
+    .map((part, index) => {
+      // If it's the first part, lowercase the whole thing
+      if (index === 0) return part.toLowerCase();
+      // Otherwise, capitalize the first letter and lowercase the rest
+      return part.charAt(0).toUpperCase() + part.slice(1).toLowerCase();
+    })
+    .join('');
+  
+  // Add 'icon' prefix if the name starts with a number
+  return /^\d/.test(normalized) ? `icon${normalized}` : normalized;
 }
 
 /**

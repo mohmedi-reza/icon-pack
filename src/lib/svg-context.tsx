@@ -2,7 +2,7 @@ import { createContext, useContext, useReducer } from 'react';
 import type { ReactNode } from 'react';
 import type { SvgState, SvgAction, SvgIcon, IconCollection } from '@/types/svg';
 import { nanoid } from 'nanoid';
-import { processSvg, createSvgString } from './svg-utils';
+import { processSvg, createSvgString, normalizeName } from './svg-utils';
 
 const initialState: SvgState = {
   icons: [],
@@ -182,15 +182,6 @@ export function SvgProvider({ children }: { children: ReactNode }) {
     }
   };
   
-  const normalizeName = (filename: string): string => {
-    return filename
-      .replace(/\.svg$/, '') // Remove .svg extension
-      .replace(/[^\w\s-]/g, '') // Remove special characters
-      .replace(/[\s-]+/g, '-') // Replace spaces and multiple hyphens with a single hyphen
-      .replace(/^-+|-+$/g, '') // Remove leading and trailing hyphens
-      .toLowerCase(); // Convert to lowercase
-  };
-  
   const createCollection = (name: string, description?: string) => {
     const collection: IconCollection = {
       id: nanoid(),
@@ -239,13 +230,17 @@ export function SvgProvider({ children }: { children: ReactNode }) {
     
     const iconMap: { [key: string]: string } = {};
     exportIcons.forEach(icon => {
-      iconMap[icon.name] = icon.content;
+      // Create a proper camelCase name for export
+      const normalizedName = normalizeName(icon.name);
+      iconMap[normalizedName] = icon.content;
     });
     
     const iconPackCode = `export const iconPack = {\n${
       Object.entries(iconMap)
         .map(([name, content]) => {
-          const viewBox = state.icons.find(icon => icon.name === name)?.viewBox || "0 0 24 24";
+          // Find the original icon to get its viewBox
+          const originalIcon = exportIcons.find(icon => normalizeName(icon.name) === name);
+          const viewBox = originalIcon?.viewBox || "0 0 24 24";
           return `  ${name}: \`${createSvgString(content, viewBox)}\``;
         })
         .join(',\n')
@@ -258,7 +253,7 @@ export function SvgProvider({ children }: { children: ReactNode }) {
     const link = document.createElement('a');
     link.href = url;
     link.download = collectionId 
-      ? `icon-pack-${state.collections.find(c => c.id === collectionId)?.name.toLowerCase() || 'collection'}.ts`
+      ? `icon-pack-${state.collections.find(c => c.id === collectionId)?.name.toLowerCase().replace(/\s+/g, '-') || 'collection'}.ts`
       : 'icon-pack.ts';
     document.body.appendChild(link);
     link.click();
