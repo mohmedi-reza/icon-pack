@@ -41,7 +41,7 @@ function App() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
             {/* Left sidebar - Collections */}
             <div className="lg:col-span-3">
-              <div className="sticky top-6">
+              <div className="sticky top-20 z-0">
                 <CollectionManager />
               </div>
             </div>
@@ -84,7 +84,7 @@ function App() {
 
             {/* Right sidebar - Icon Details */}
             <div className="lg:col-span-3">
-              <div className="sticky top-6">
+              <div className="sticky top-20 z-0">
                 <section className="bg-card rounded-xl border shadow-sm">
                   <IconDetails />
                 </section>
