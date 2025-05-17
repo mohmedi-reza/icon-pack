@@ -96,7 +96,7 @@ export function IconDetails() {
           </Button>
         </div>
         
-        <div className="flex flex-col sm:flex-row sm:items-start gap-6">
+        <div className="flex flex-col sm:flex-row sm:items-start gap-3">
           <div className="flex-shrink-0 h-32 w-32 p-4 border rounded-md flex items-center justify-center mx-auto sm:mx-0">
             <div dangerouslySetInnerHTML={{ 
               __html: `<svg viewBox="${selectedIcon.viewBox || "0 0 24 24"}" class="h-full w-full text-primary">${selectedIcon.content}</svg>` 
